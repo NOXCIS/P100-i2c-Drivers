@@ -21,6 +21,8 @@ prepare:
 	@mkdir -p $(BUILD_DIR)
 	@echo "obj-m := $(foreach mod,$(MODULE_NAMES),$(mod).o)" > $(BUILD_DIR)/Makefile
 	@cp -r $(SRC_DIR)/* $(BUILD_DIR)/
+	@echo "Creating specific Kbuild file..."
+	@echo "obj-m := i2c-bcm2835.o i2c-mux.o i2c-mux-pca954x.o i2c-dev.o" > $(BUILD_DIR)/Kbuild
 
 modules: prepare
 	@echo "Compiling I2C drivers using installed kernel headers..."

@@ -411,8 +411,7 @@ static int pca954x_init(struct i2c_client *client, struct pca954x *data)
 /*
  * I2C init/probing/exit functions
  */
-static int pca954x_probe(struct i2c_client *client,
-			 const struct i2c_device_id *id)
+static int pca954x_probe(struct i2c_client *client)
 {
 	struct i2c_adapter *adap = client->adapter;
 	struct device *dev = &client->dev;
@@ -421,6 +420,7 @@ static int pca954x_probe(struct i2c_client *client,
 	struct pca954x *data;
 	int num;
 	int ret;
+	const struct i2c_device_id *id;
 
 	if (!i2c_check_functionality(adap, I2C_FUNC_SMBUS_BYTE))
 		return -ENODEV;
@@ -446,8 +446,12 @@ static int pca954x_probe(struct i2c_client *client,
 	}
 
 	data->chip = device_get_match_data(dev);
-	if (!data->chip)
+	if (!data->chip) {
+		id = i2c_match_id(pca954x_id, client);
+		if (!id)
+			return -ENODEV;
 		data->chip = &chips[id->driver_data];
+	}
 
 	if (data->chip->id.manufacturer_id != I2C_DEVICE_ID_NONE) {
 		struct i2c_device_identity id;

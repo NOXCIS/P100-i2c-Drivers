@@ -1,4 +1,4 @@
-# Raspberry Pi I2C Drivers
+# Pieces P100 ECC I2C Drivers
 
 This project compiles and installs specific I2C drivers for Raspberry Pi:
 - i2c_bcm2835 - BCM2835 I2C controller driver

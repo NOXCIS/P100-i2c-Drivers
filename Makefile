@@ -49,6 +49,9 @@ install: modules
 	modprobe i2c_mux
 	modprobe i2c_mux_pca954x
 	modprobe i2c_dev
+	@echo "Copying settings.toml to /etc/helium_gateway..."
+	@mkdir -p /etc/helium_gateway
+	@cp settings.toml /etc/helium_gateway/
 	@echo "Installation complete"
 
 clean:

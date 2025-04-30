@@ -22,7 +22,11 @@ prepare:
 	@echo "obj-m := $(foreach mod,$(MODULE_NAMES),$(mod).o)" > $(BUILD_DIR)/Makefile
 	@cp -r $(SRC_DIR)/* $(BUILD_DIR)/
 	@echo "Creating specific Kbuild file..."
-	@echo "obj-m := i2c-bcm2835.o i2c-mux.o i2c-mux-pca954x.o i2c-dev.o" > $(BUILD_DIR)/Kbuild
+	@echo "# Automatically generated Kbuild file" > $(BUILD_DIR)/Kbuild
+	@echo "obj-m += busses/i2c-bcm2835.o" >> $(BUILD_DIR)/Kbuild
+	@echo "obj-m += i2c-mux.o" >> $(BUILD_DIR)/Kbuild
+	@echo "obj-m += muxes/i2c-mux-pca954x.o" >> $(BUILD_DIR)/Kbuild
+	@echo "obj-m += i2c-dev.o" >> $(BUILD_DIR)/Kbuild
 
 modules: prepare
 	@echo "Compiling I2C drivers using installed kernel headers..."

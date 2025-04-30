@@ -37,6 +37,21 @@ install: modules
 	@echo "Installing I2C drivers..."
 	$(MAKE) -C $(KERNEL_HEADERS) M=$(BUILD_DIR) modules_install
 	depmod -a
+	@echo "Configuring I2C in boot config..."
+	@echo "# Enable I2C controllers (added by I2C driver installer)" | sudo tee -a /boot/firmware/config.txt > /dev/null
+	@echo "dtparam=i2c_arm=on" | sudo tee -a /boot/firmware/config.txt > /dev/null
+	@echo "dtparam=i2c0=on" | sudo tee -a /boot/firmware/config.txt > /dev/null 
+	@echo "dtparam=i2c1=on" | sudo tee -a /boot/firmware/config.txt > /dev/null
+	@echo "Boot configuration updated. Reboot required to apply changes."
+	@echo "Loading I2C drivers..."
+	modprobe -r i2c_bcm2835 i2c_mux i2c_mux_pca954x i2c_dev || true
+	modprobe i2c_bcm2835
+	modprobe i2c_mux
+	modprobe i2c_mux_pca954x
+	modprobe i2c_dev
+	@echo "Copying settings.toml to /etc/helium_gateway..."
+	@mkdir -p /etc/helium_gateway
+	@cp settings.toml /etc/helium_gateway/
 	@echo "Installation complete"
 
 clean:

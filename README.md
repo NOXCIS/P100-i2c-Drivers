@@ -1,31 +1,36 @@
-# I2C Drivers Compilation
+# Raspberry Pi I2C Drivers
 
-This project compiles specific I2C drivers from the Linux kernel source:
-- i2c_bcm2835
-- i2c_mux
-- i2c_mux_pca954x
-- i2c_dev
+This project compiles and installs specific I2C drivers for Raspberry Pi:
+- i2c_bcm2835 - BCM2835 I2C controller driver
+- i2c_mux - I2C multiplexer support
+- i2c_mux_pca954x - PCA954x I2C multiplexer/switch driver
+- i2c_dev - I2C character device interface
 
 ## Prerequisites
 
-- Linux/macOS environment
-- GCC compiler and build tools
-- Make
-- curl
-- tar with xz support
+- Raspberry Pi with 64-bit OS
+- Installed kernel headers (`apt install linux-headers-$(uname -r)`)
+- Build tools (`apt install build-essential`)
 
 ## Usage
 
-### Compile all drivers
+### Compile the drivers
 
 ```bash
 make
 ```
 
+### Install and auto-configure
+
+```bash
+sudo make install
+```
+
 This will:
-1. Download the Linux kernel source (version 6.1.0)
-2. Configure it for module building
-3. Compile the specified I2C driver modules
+1. Compile the I2C driver modules
+2. Install them to the appropriate kernel modules directory
+3. Automatically configure I2C in `/boot/firmware/config.txt`
+4. Load the modules immediately
 
 ### Clean build files
 
@@ -33,22 +38,37 @@ This will:
 make clean
 ```
 
-### Remove all downloaded and generated files
+## Features
+
+- **Kernel Module Building**: Builds modules compatible with your current kernel
+- **Auto-Configuration**: Automatically enables I2C interfaces in boot config
+- **Auto-Loading**: Loads the modules immediately after installation
+- **Multiplexer Support**: Includes PCA954x multiplexer driver for connecting multiple I2C devices
+
+## Post-Installation
+
+After installation, you should see multiple I2C buses available:
 
 ```bash
-make distclean
+i2cdetect -l
 ```
 
-## Output
+You may need to reboot if this is the first time enabling I2C on your system:
+```
+sudo reboot
+```
 
-The compiled kernel modules will be available in the `build/` directory:
-- i2c-bcm2835.ko
-- i2c-mux.ko
-- i2c-mux-pca954x.ko
-- i2c-dev.ko
+## Scanning I2C Buses
 
-## Notes
+To scan for I2C devices on a specific bus:
+```
+sudo i2cdetect -y <bus_number>
+```
 
-- The Makefile is configured to use Linux kernel version 6.1.0. You can modify the `KERNEL_VERSION` variable to use a different version.
-- You may need to adjust the configuration process depending on your target system.
-- Building kernel modules requires appropriate kernel headers and development tools. 
+## Troubleshooting
+
+If I2C devices aren't showing up after installation:
+1. Ensure I2C is enabled in boot config
+2. Verify physical connections
+3. Check if the modules are loaded with `lsmod | grep i2c`
+4. Reboot the system if configuration was updated 
